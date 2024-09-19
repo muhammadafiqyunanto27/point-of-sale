@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <title>Coffee Shop</title>
+    <link rel="stylesheet" href="./styles/style.css" />
+  </head>
+  <body>
+    <div
+      class="conter"
+      style="width: 25%; position: fixed; right: 0px; max-height: 100vh"
+    >
+      <h2>Current Order</h2>
+      <div class="order" id="order">
+        <div class="current" id="current"></div>
+      </div>
+      <div class="subtotal" id="subtotal">
+        <hr />
+        <h3 id="total">
+          Total:
+          <span id="totalHarga" class="totalHarga"></span>
+        </h3>
+      </div>
+      <div class="payment">
+        <button>Lanjut pembayaran</button>
+      </div>
+    </div>
+    <div class="container">
+      <header>
+        <div class="header-teks">
+          <h1>Selamat datang di seblak shop</h1>
+          <p>makan seblak sepuasnya</p>
+        </div>
+        <div class="header-search">
+          <label for="search" class="search-label">
+            <i class="ri-search-line search-icon"></i>
+            <input
+              type="search"
+              class="search"
+              id="search"
+              placeholder="Search product"
+            />
+          </label>
+          <i class="ri-filter-line"></i>
+        </div>
+      </header>
+      <div class="button">
+        <div class="btn">
+          <button>Seblak</button>
+        </div>
+        <div class="btn">
+          <button>Ceker</button>
+        </div>
+        <div class="btn">
+          <button>Roti</button>
+        </div>
+        <div class="btn">
+          <button>Ayam</button>
+        </div>
+        <div class="btn">
+          <button>bebek</button>
+        </div>
+      </div>
+      <div class="product-container" id="product-container"></div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const URL = "./data.json";
+        const productContainer = document.getElementById("product-container");
+        fetch(URL)
+          .then((response) => response.json())
+          .then((data) => {
+            const products = data.products;
+            saveProductsToLocalStorage(products);
+            productContainer.innerHTML = getProduct(products);
+          });
+
+        const getProduct = (products) => {
+          return products
+            .map(
+              (product) =>
+                `
+          <div class="product" id="product" key=${product.id}>
+          <img
+            src="${product.img}"
+            alt="${product.title}" id="img"
+          />
+          <h3 id="title-product">${product.title}</h3>
+          <span id="description">${product.description}</span>
+          <p>Rp<strong id="price">${product.price}</strong></p>
+          <button class="btn-small" onclick="addToOrder(${product.id})">Add</button>
+        </div>
+          `
+            )
+            .join("");
+        };
+        const carts = getCartsFromLocalStorage();
+        cartsCurrent(carts);
+      });
+
+      function addToOrder(id) {
+        const carts = getCartsFromLocalStorage();
+        const products = getProductsFromLocalStorage();
+        const productSelected = products.find((product) => product.id == id);
+        const existingProduct = carts.some((product) => product.id == id);
+        const findProduct = carts.find((product) => product.id == id);
+        console.log(existingProduct);
+        if (existingProduct) {
+          findProduct.counter++;
+        } else {
+          carts.push({
+            id: id,
+            title: productSelected.title,
+            price: productSelected.price,
+            img: productSelected.img,
+            counter: 1,
+          });
+        }
+        totalPrice(carts);
+        saveCartsToLocalStorage(carts);
+        cartsCurrent(carts);
+      }
+
+      function plusButton(id) {
+        const carts = getCartsFromLocalStorage();
+        const product = carts.find((product) => product.id == id);
+        if (product) {
+          product.counter++;
+          totalPrice(carts);
+          saveCartsToLocalStorage(carts);
+          cartsCurrent(carts);
+        }
+      }
+
+      function minusButton(id) {
+        const carts = getCartsFromLocalStorage();
+        const product = carts.find((product) => product.id == id);
+        if (product && product.counter > 0) {
+          product.counter--;
+          if (product.counter === 0) {
+            const index = carts.indexOf(product);
+            carts.splice(index, 1);
+          }
+          totalPrice(carts);
+          saveCartsToLocalStorage(carts);
+          cartsCurrent(carts);
+        }
+      }
+
+      function totalPrice(carts) {
+        const total = carts.reduce(
+          (acc, product) => acc + product.price * product.counter, 0 
+        );
+        console.log(total);
+        document.getElementById("totalHarga").innerHTML = `${total}`;
+      }
+
+      function cartsCurrent(carts) {
+        const current = document.getElementById("current");
+        current.innerHTML = getCarts();
+
+        function getCarts() {
+          return carts
+            .map(
+              (product) => `
+              <div class="current-item">
+                <div class="image">
+                     <img src="${product.img}"  alt="${product.title}" id="img" />
+                </div>
+                <div class="teks-title">
+                     <h3 id="title-product">${product.title}</h3>
+                     <div class="teks">
+                         <p>Rp<strong id="price">${product.price}</strong></p>
+                           <div class="button-">
+                            <button id="minus" class="button minus" onclick="minusButton(${product.id})">-</button>
+                            <div id="counter" class="counter">${product.counter}</div>
+                            <button id="plus" class="button plus" onclick="plusButton(${product.id})">+</button>
+              </div>
+                     </div>
+                </div>
+              </div>`
+            )
+            .join("");
+        }
+        totalPrice(carts);
+      }
+
+      function saveCartsToLocalStorage(arg) {
+        localStorage.setItem("carts", JSON.stringify(arg));
+      }
+
+      function getCartsFromLocalStorage() {
+        const cartsJSON = localStorage.getItem("carts");
+        return cartsJSON ? JSON.parse(cartsJSON) : [];
+      }
+
+      function getProductsFromLocalStorage() {
+        const productJSON = localStorage.getItem("products");
+        return productJSON ? JSON.parse(productJSON) : [];
+      }
+
+      function saveProductsToLocalStorage(arg) {
+        localStorage.setItem("products", JSON.stringify(arg));
+      }
+    </script>
+  </body>
+</html>

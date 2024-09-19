@@ -1,0 +1,46 @@
+{
+    "products": [
+      {
+        "id": 1,
+        "title": "Seblak Ceker Granat",
+        "description": "Seblak Ceker dengan cita rasa yang sangat menggelegar",
+        "price": "12000",
+        "img": "./assets/images.jpeg"
+      },
+      {
+        "id": 2,
+        "title": "Seblak Ceker Granat",
+        "description": "Seblak Ceker dengan cita rasa yang sangat menggelegar",
+        "price": "12000",
+        "img": "./assets/images.jpeg"
+      },
+      {
+        "id": 3,
+        "title": "Seblak Ceker Granat",
+        "description": "Seblak Ceker dengan cita rasa yang sangat menggelegar",
+        "price": "12000",
+        "img": "./assets/images.jpeg"
+      },
+      {
+        "id": 4,
+      "title": "Seblak Ceker Granat",
+        "description": "Seblak Ceker dengan cita rasa yang sangat menggelegar",
+        "price": "12000",
+        "img": "./assets/images.jpeg"
+      },
+      {
+        "id": 5,
+       "title": "Seblak Ceker Granat",
+        "description": "Seblak Ceker dengan cita rasa yang sangat menggelegar",
+        "price": "12000",
+        "img": "./assets/images.jpeg"
+      },
+      {
+        "id": 6,
+       "title": "Seblak Ceker Granat",
+        "description": "Seblak Ceker dengan cita rasa yang sangat menggelegar",
+        "price": "12000",
+        "img": "./assets/images.jpeg"
+      }
+    ]
+  }
